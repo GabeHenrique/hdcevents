@@ -43,14 +43,7 @@ class EventService
      */
     public function createEvent(Request $request): RedirectResponse
     {
-        $event = new Event();
-        $event['title'] = $request->input('title');
-        $event['description'] = $request->input('description');
-        $event['city'] = $request->input('city');
-        $event['is_private'] = $request->input('private');
-        $event['items'] = $request->input('items');
-        $event['date'] = $request->input('date');
-        $event['image'] = $this->validateImage($request);
+        $event = $this->mountEvent($request);
 
         $event->user_id = auth()->id();
 
@@ -122,14 +115,7 @@ class EventService
      */
     public function updateEvent(Request $request, int $id): RedirectResponse
     {
-        $event = [];
-        $event['title'] = $request->input('title');
-        $event['description'] = $request->input('description');
-        $event['city'] = $request->input('city');
-        $event['is_private'] = $request->input('private');
-        $event['items'] = $request->input('items');
-        $event['date'] = $request->input('date');
-        $event['image'] = $this->validateImage($request);
+        $event = $this->mountEvent($request);
 
         Event::query()->findOrFail($id)->update($event);
 
@@ -179,5 +165,22 @@ class EventService
         } else {
             return 'default.jpg';
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function mountEvent(Request $request): array
+    {
+        $event = [];
+        $event['title'] = $request->input('title');
+        $event['description'] = $request->input('description');
+        $event['city'] = $request->input('city');
+        $event['is_private'] = $request->input('private');
+        $event['items'] = $request->input('items');
+        $event['date'] = $request->input('date');
+        $event['image'] = $this->validateImage($request);
+        return $event;
     }
 }
